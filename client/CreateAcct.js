@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 class CreateAcct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      username: "",
       password: "",
       retyped: ""
     };
@@ -16,6 +16,31 @@ class CreateAcct extends React.Component {
     this.setState({
       [e.target.id]: e.target.value
     });
+  }
+  handleSubmit(e) {
+    e.preventDefault();
+    //passwords match?
+    let payload = {
+      user_email: this.state.email,
+      user_password: this.state.password
+    };
+
+    axios
+      .post("/createAccount", payload)
+      .then(data => {
+        console.log(data.data, typeof data.data);
+        if (data.data === 23505) {
+          alert(
+            "We already have an account associated with that email address."
+          );
+        } else {
+          console.log(data, "success");
+          this.props.history.push("/main");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   render() {
@@ -29,25 +54,25 @@ class CreateAcct extends React.Component {
             id="email"
             onChange={e => this.inputChange(e)}
           />
+
           <input
-            type="text"
-            placeholder="username"
-            id="username"
-            onChange={e => this.inputChange(e)}
-          />
-          <input
-            type="text"
+            type="password"
             placeholder="password"
             id="password"
             onChange={e => this.inputChange(e)}
           />
           <input
-            type="text"
+            type="password"
             placeholder="re-type password"
             id="retyped"
             onChange={e => this.inputChange(e)}
           />
-          <input type="submit" />
+          <input
+            type="submit"
+            onClick={e => {
+              this.handleSubmit(e);
+            }}
+          />
         </form>
         <Link to="/login">Already have an account?</Link>
       </div>

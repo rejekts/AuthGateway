@@ -21,8 +21,6 @@ module.exports = {
       user: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE
-      // user: '',
-      // password: '',
     },
     migrations: {
       directory: "./knex/migrations"

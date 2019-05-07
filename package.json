@@ -8,7 +8,10 @@
     "start": "webpack-dev-server  --open --color ",
     "build": "rimraf dist &&  webpack --progress --profile",
     "server": "nodemon server/server.js",
-    "server-prod": "node server/server.js"
+    "server-prod": "node server/server.js",
+    "create-db": "createdb 4gproxy; knex migrate:latest",
+    "seed-db": "knex seed:run",
+    "reset-db": "knex migrate:rollback; knex migrate:latest; knex seed:run"
   },
   "repository": {
     "type": "git",

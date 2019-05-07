@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
+      email: "",
       password: ""
     };
   }
@@ -15,6 +16,22 @@ class Login extends React.Component {
       [e.target.id]: e.target.value
     });
   }
+  handleSubmit(e) {
+    e.preventDefault();
+    let payload = {
+      user_email: this.state.email,
+      user_password: this.state.password
+    };
+    axios
+      .post("/login", payload)
+      .then(data => {
+        this.props.history.push("/main");
+      })
+      .catch(err => {
+        e.target.reset();
+        alert("email or password incorrect");
+      });
+  }
 
   render() {
     return (
@@ -23,17 +40,17 @@ class Login extends React.Component {
         <form>
           <input
             type="text"
-            placeholder="username"
-            id="username"
-            onChange={e => this.usernameChange(e)}
+            placeholder="email"
+            id="email"
+            onChange={e => this.inputChange(e)}
           />
           <input
             type="password"
             placeholder="password"
             id="password"
-            onChange={e => this.passwordChange(e)}
+            onChange={e => this.inputChange(e)}
           />
-          <input type="submit" />
+          <input type="submit" onClick={e => this.handleSubmit(e)} />
         </form>
         <Link to="/createAcct">Create New Account</Link>
       </div>
