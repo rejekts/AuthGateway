@@ -3,38 +3,80 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
 const db = require("../knex/knex.js");
-
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const expressjwt = require("express-jwt");
 const port = process.env.PORT || 3000;
 app.use(express.static("dist"));
-app.use(
-  bodyParser.json({
-    strict: false
-  })
-);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Headers", "Content-type,Authorization");
+  next();
+});
+const jwtMW = expressjwt({
+  secret: "to be determined"
+});
 
 app.post("/createAccount", (req, res) => {
   db.createAccount(req.body)
     .then(data => {
-      console.log(data);
-      res.send(data);
+      console.log(data, "<= data coming back from account creation");
+      res.status(200).send("Success");
     })
     .catch(err => {
       console.log(err);
       res.send(err.code);
     });
 });
+
 app.post("/login", (req, res) => {
-  console.log("endpoint hit");
+  console.log("hitting port 5000 postLogin endpoint");
   db.validateLogin(req.body)
     .then(data => {
-      console.log(data);
-      res.send(data);
+      console.log(data, "<= data from validate login back");
+      if (data !== "Successful Login!") {
+        res.status(401).json({
+          success: false,
+          token: null,
+          err: "Username or password is incorrect"
+        });
+      } else {
+        db.grabUser(req.body.user_email).then(account => {
+          let token = jwt.sign(
+            { id: account[0].user_id, email: account[0].user_email },
+            "to be determined",
+            { expiresIn: 600 }
+          ); // Signing the token
+          res.json({
+            success: true,
+            err: null,
+            token
+          });
+        });
+      }
     })
     .catch(err => {
       console.log(err);
       res.send(err);
     });
 });
+
+app.get("/", jwtMW, (req, res) => {
+  res.send("You are authenticated"); //Sending some response when authenticated
+});
+
+// Error handling
+app.use(function(err, req, res, next) {
+  if (err.name === "UnauthorizedError") {
+    // Send the error rather than to show it on the console
+    res.status(401).send(err);
+  } else {
+    next(err);
+  }
+});
+
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });

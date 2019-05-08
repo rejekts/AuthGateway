@@ -5,7 +5,7 @@ module.exports = {
       host: "localhost",
       // user: '',
       // password: '',
-      database: "4gproxy"
+      database: "4gproxyusers"
     },
     migrations: {
       directory: "./knex/migrations"
