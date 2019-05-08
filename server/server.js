@@ -62,6 +62,20 @@ app.post("/login", (req, res) => {
       res.send(err);
     });
 });
+app.get("/services/user/:id", jwtMW, (req, res) => {
+  console.log(req.params);
+  axios
+    .get(`http://localhost:5000/getAll/${req.params.id}`)
+    .then(response => {
+      console.log("successful return from proxy server");
+      console.log(response);
+      res.status(200).json(response);
+    })
+    .catch(err => {
+      console.log("error from proxy server");
+      res.status(401).send(err);
+    });
+});
 
 app.get("/", jwtMW, (req, res) => {
   res.send("You are authenticated"); //Sending some response when authenticated

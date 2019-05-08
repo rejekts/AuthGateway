@@ -58,6 +58,16 @@ export default class AuthService {
     // Using jwt-decode npm package to decode the token
     return decode(this.getToken());
   }
+  getHeaders() {
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+    if (this.loggedIn()) {
+      headers["Authorization"] = "Bearer " + this.getToken();
+    }
+    return { headers };
+  }
 
   fetch(url, options) {
     // performs api calls sending the required authentication headers

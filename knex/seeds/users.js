@@ -12,6 +12,10 @@ exports.seed = function(knex, Promise) {
           user_password: "justins"
         },
         {
+          user_email: "asdf",
+          user_password: "asdf"
+        },
+        {
           user_email: "Nick@nick.com",
           user_password: "nickf"
         }
