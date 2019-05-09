@@ -1,25 +1,47 @@
 import React from "react";
-import { Link } from "react-router-dom";
-const buttonstyle = {
-  border: "2px solid black",
-  borderRadius: "3px"
-};
+import { withRouter } from "react-router-dom";
+import { Menu, Container, Button } from "semantic-ui-react";
+import AuthService from "../utilities/auth.js";
+
 class Landing extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fixed: true
+    };
+    this.auth = new AuthService();
+  }
+  handleClick(e, dest) {
+    e.preventDefault();
+    this.props.history.push(`/${dest}`);
   }
   render() {
     return (
-      <div>
-        <div>Please Login or Create a new account</div>
-        <Link style={buttonstyle} to="/login">
-          Login
-        </Link>
-        <Link style={buttonstyle} to="/createAcct">
-          Create New Account
-        </Link>
-      </div>
+      <Menu fixed="top" pointing="true" secondary="true" size="large">
+        <Container>
+          <Menu.Item position="right">
+            <Button
+              as="a"
+              onClick={e => {
+                this.handleClick(e, "login");
+              }}
+            >
+              Log in
+            </Button>
+            <Button
+              as="a"
+              onClick={e => {
+                this.handleClick(e, "createAcct");
+              }}
+              primary={this.state.fixed}
+              style={{ marginLeft: "0.5em" }}
+            >
+              Sign Up
+            </Button>
+          </Menu.Item>
+        </Container>
+      </Menu>
     );
   }
 }
-export default Landing;
+export default withRouter(Landing);

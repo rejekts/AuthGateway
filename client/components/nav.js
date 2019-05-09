@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import AuthService from "../utilities/auth.js";
+import { Container, Menu, Button } from "semantic-ui-react";
 
 class Nav extends React.Component {
   constructor(props) {
@@ -15,46 +16,46 @@ class Nav extends React.Component {
 
   render() {
     return (
-      <div className="nav">
-        <h2 className="logo">Badger Services</h2>
-        <div className="nav-links">
-          <Link
-            className="nav-link"
+      <Menu>
+        <Container>
+          <Menu.Item
+            as={Link}
             to="/dashboard"
             onClick={e => {
               this.props.change(e, "Dashboard");
             }}
           >
             Dashboard
-          </Link>
-          <Link
-            className="nav-link"
+          </Menu.Item>
+          <Menu.Item
+            as={Link}
             to="/services"
             onClick={e => {
               this.props.change(e, "Services");
             }}
           >
             Services
-          </Link>
-          <Link
-            className="nav-link"
+          </Menu.Item>
+          <Menu.Item
+            as={Link}
             to="/billing"
             onClick={e => {
               this.props.change(e, "Billing");
             }}
           >
             Billing
-          </Link>
-          <a
-            className="nav-link"
-            onClick={e => {
-              this.handleLogout(e);
-            }}
-          >
-            Log off
-          </a>
-        </div>
-      </div>
+          </Menu.Item>
+          <Menu.Item position="right">
+            <Button
+              onClick={e => {
+                this.handleLogout(e);
+              }}
+            >
+              Log off
+            </Button>
+          </Menu.Item>
+        </Container>
+      </Menu>
     );
   }
 }

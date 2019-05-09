@@ -3,6 +3,7 @@ import axios from "axios";
 import AuthService from "../utilities/auth.js";
 import { withRouter } from "react-router-dom";
 import Proxy from "./proxy.js";
+import { Menu, Container, Button, Header, List } from "semantic-ui-react";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -21,36 +22,37 @@ class Dashboard extends React.Component {
 
   render() {
     return (
-      <div className="dash-container">
-        <h1>Your Dashboard </h1>
+      <Container>
+        <Header as="h2">Your Dashboard </Header>
         {this.state.selected ? (
           <Proxy
             handleSelect={this.handleSelect}
             proxy={this.props.user_proxies[this.state.key]}
           />
         ) : (
-          <div>
-            <h3>Select a proxy to expand details</h3>
-            <ul>
-              {this.props.user_proxies.map((proxy, key) => {
-                return (
-                  <li style={{ marginTop: "20px" }}>
-                    <div
+          <List divided verticalAlign="middle">
+            <Header as="h3">Select a proxy to expand details</Header>
+
+            {this.props.user_proxies.map((proxy, key) => {
+              return (
+                <List.Item style={{ marginTop: "20px" }}>
+                  <List.Content floated="right">
+                    <Button
                       onClick={e => {
                         this.handleSelect(e, key);
                       }}
                     >
-                      {proxy.proxyServerID}
-                    </div>
-                    <div>{proxy.vpnID}</div>
-                    <div>{proxy.resetURL}</div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                      Details
+                    </Button>
+                  </List.Content>
+
+                  <List.Content>Proxy ID: {proxy.proxyServerID}</List.Content>
+                </List.Item>
+              );
+            })}
+          </List>
         )}
-      </div>
+      </Container>
     );
   }
 }
