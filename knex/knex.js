@@ -12,7 +12,7 @@ const validateLogin = data => {
     .select("user_password")
     .then(results => {
       console.log(results, " <= data from email validation");
-      if (!results) {
+      if (results.length === 0) {
         return "Unsuccessful";
       } else {
         //send back positive/check password

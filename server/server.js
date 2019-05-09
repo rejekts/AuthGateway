@@ -11,7 +11,7 @@ app.use(express.static("dist"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "*"); //"http://localhost:3000");
   res.setHeader("Access-Control-Allow-Headers", "Content-type,Authorization");
   next();
 });
@@ -62,14 +62,14 @@ app.post("/login", (req, res) => {
       res.send(err);
     });
 });
-app.get("/services/user/:id", jwtMW, (req, res) => {
+app.get("/dashboard/user/:id", jwtMW, (req, res) => {
   console.log(req.params);
   axios
     .get(`http://localhost:5000/getAll/${req.params.id}`)
     .then(response => {
       console.log("successful return from proxy server");
-      console.log(response);
-      res.status(200).json(response);
+      console.log(response.data);
+      res.status(200).send(response.data);
     })
     .catch(err => {
       console.log("error from proxy server");

@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
-import AuthService from "./utilities/auth.js";
+import AuthService from "../utilities/auth.js";
 
 class Login extends React.Component {
   constructor(props) {
@@ -66,4 +66,4 @@ class Login extends React.Component {
     );
   }
 }
-export default Login;
+export default withRouter(Login);

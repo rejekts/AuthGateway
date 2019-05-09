@@ -13,11 +13,14 @@ const Protect = Route => {
       this.auth = new AuthService();
     }
     componentDidMount() {
+      console.log("made it here");
       if (this.auth.loggedIn()) {
+        console.log("true");
         this.setState({
           loading: false
         });
       } else {
+        console.log("false");
         this.setState({ loading: false, redirect: true });
       }
     }

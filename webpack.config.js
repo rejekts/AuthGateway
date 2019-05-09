@@ -7,9 +7,17 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 module.exports = {
   devServer: {
     contentBase: path.join(__dirname, "dist"),
+    watchContentBase: true,
     compress: true,
     port: 9000,
-    historyApiFallback: true //navigation
+    historyApiFallback: true, //navigation
+    proxy: [
+      {
+        context: () => true,
+        target: "http://localhost:3000",
+        secure: false
+      }
+    ]
   },
 
   devtool: "cheap-eval-source-map", //fast build, super fast rebuilds

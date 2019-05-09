@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
-import AuthService from "./utilities/auth.js";
+import AuthService from "../utilities/auth.js";
 
 class CreateAcct extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class CreateAcct extends React.Component {
   }
   handleSubmit(e) {
     e.preventDefault();
-    //passwords match?
+    //passwords match?  TODO <------------
     let payload = {
       user_email: this.state.email,
       user_password: this.state.password
@@ -38,8 +38,15 @@ class CreateAcct extends React.Component {
           );
         } else {
           console.log(data, "success");
-
-          this.props.history.push("/main");
+          this.auth
+            .login(payload.user_email, payload.user_password)
+            .then(response => {
+              console.log("logged in");
+              this.props.history.push("/main");
+            })
+            .catch(err => {
+              console.log("something went wrong in createAcct");
+            });
         }
       })
       .catch(err => {
@@ -90,4 +97,4 @@ class CreateAcct extends React.Component {
     );
   }
 }
-export default CreateAcct;
+export default withRouter(CreateAcct);
