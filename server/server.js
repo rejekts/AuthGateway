@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
 const db = require("../knex/knex.js");
+const utility = require("./utility.js");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const expressjwt = require("express-jwt");
@@ -11,7 +12,7 @@ app.use(express.static("dist"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); //"http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "*"); //"http://localhost:3000"); will update
   res.setHeader("Access-Control-Allow-Headers", "Content-type,Authorization");
   next();
 });
@@ -20,19 +21,28 @@ const jwtMW = expressjwt({
 });
 
 app.post("/createAccount", (req, res) => {
-  db.createAccount(req.body)
-    .then(data => {
-      console.log(data, "<= data coming back from account creation");
-      res.status(200).send("Success");
+  console.log(req.body);
+  utility
+    .hashPassword(req.body.user_password)
+    .then(hashed => {
+      console.log(hashed, "hashed");
+      req.body.user_password = hashed;
+      db.createAccount(req.body)
+        .then(data => {
+          console.log(data, "<= data coming back from account creation");
+          res.status(200).send("Success");
+        })
+        .catch(err => {
+          console.log("error from create account");
+          res.send(err.code);
+        });
     })
     .catch(err => {
-      console.log(err);
-      res.send(err.code);
+      console.log("error in your hash code");
     });
 });
 
 app.post("/login", (req, res) => {
-  console.log("hitting port 5000 postLogin endpoint");
   db.validateLogin(req.body)
     .then(data => {
       console.log(data, "<= data from validate login back");

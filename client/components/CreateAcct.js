@@ -36,6 +36,8 @@ class CreateAcct extends React.Component {
           alert(
             "We already have an account associated with that email address."
           );
+        } else if (data.data === 23502) {
+          alert("error creating account");
         } else {
           console.log(data, "success");
           this.auth
