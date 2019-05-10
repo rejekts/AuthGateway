@@ -2,13 +2,15 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
 import AuthService from "../utilities/auth.js";
+import { Button } from "semantic-ui-react";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      loading: false
     };
     this.auth = new AuthService();
   }
@@ -20,11 +22,13 @@ class Login extends React.Component {
   }
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({ loading: true });
     let email = this.state.email;
     let password = this.state.password;
     this.auth
       .login(email, password)
       .then(response => {
+        this.setState({ loading: false });
         this.props.history.push("/main");
       })
       .catch(err => {
@@ -55,11 +59,13 @@ class Login extends React.Component {
             />
             <Link to="/createAcct">Create New Account</Link>
 
-            <input
+            <Button
+              loading={this.state.loading}
               className="form-submit"
-              type="submit"
               onClick={e => this.handleSubmit(e)}
-            />
+            >
+              Submit
+            </Button>
           </form>
         </div>
       </div>

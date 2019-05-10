@@ -2,6 +2,7 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
 import AuthService from "../utilities/auth.js";
+import { Button } from "semantic-ui-react";
 
 class CreateAcct extends React.Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class CreateAcct extends React.Component {
     this.state = {
       email: "",
       password: "",
-      retyped: ""
+      retyped: "",
+      loading: false
     };
     this.auth = new AuthService();
   }
@@ -21,6 +23,7 @@ class CreateAcct extends React.Component {
   }
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({ loading: true });
     //passwords match?  TODO <------------
     let payload = {
       user_email: this.state.email,
@@ -44,6 +47,7 @@ class CreateAcct extends React.Component {
             .login(payload.user_email, payload.user_password)
             .then(response => {
               console.log("logged in");
+              this.setState({ loading: false });
               this.props.history.push("/main");
             })
             .catch(err => {
@@ -86,13 +90,15 @@ class CreateAcct extends React.Component {
             />
             <Link to="/login">Already have an account?</Link>
 
-            <input
+            <Button
+              loading={this.state.loading}
               className="form-submit"
-              type="submit"
               onClick={e => {
                 this.handleSubmit(e);
               }}
-            />
+            >
+              Submit
+            </Button>
           </form>
         </div>
       </div>
