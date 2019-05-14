@@ -33,6 +33,8 @@ class Login extends React.Component {
       })
       .catch(err => {
         alert("Email or Password Incorrect");
+        this.setState({ loading: false });
+
         document.getElementById("password").value = "";
       });
   }
