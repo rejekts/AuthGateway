@@ -87,6 +87,10 @@ app.get("/dashboard/user/:id", jwtMW, (req, res) => {
     });
 });
 
+app.post("/billing/information", jwtMW, (req, res) => {
+  console.log(req.body, "body of post request");
+});
+
 app.get("/", jwtMW, (req, res) => {
   res.send("You are authenticated"); //Sending some response when authenticated
 });

@@ -7,6 +7,25 @@ import Dashboard from "./dashboard.js";
 import Services from "./services.js";
 import Billing from "./billing.js";
 
+const stripe = Stripe("pk_test_OlwkpT4F6iqWnxxsxYV14LVA00aubL2pG3");
+const elements = stripe.elements();
+
+const cardStyle = {
+  base: {
+    color: "#32325d",
+    fontSmoothing: "antialiased",
+    fontSize: "16px",
+    "::placeholder": {
+      color: "#aab7c4"
+    }
+  },
+  invalid: {
+    color: "#fa755a",
+    iconColor: "#fa755a"
+  }
+};
+const card = elements.create("card", { style: cardStyle });
+
 class Main extends React.Component {
   constructor(props) {
     super(props);
@@ -55,7 +74,7 @@ class Main extends React.Component {
         ) : this.state.focus === "Services" ? (
           <Services profile={this.state.user_id} />
         ) : (
-          <Billing profile={this.state.user_id} />
+          <Billing card={card} profile={this.state.user_id} stripe={stripe} />
         )}
       </div>
     );
