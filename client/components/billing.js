@@ -7,11 +7,14 @@ import {
   Header,
   Grid
 } from "semantic-ui-react";
+import axios from "axios";
+import AuthService from "../utilities/auth.js";
 
 class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      user_id: null,
       name: "",
       billingAddress1: "",
       billingAddress2: "",
@@ -20,8 +23,21 @@ class Billing extends React.Component {
       billingZip: "",
       filledOut: false
     };
+    this.auth = new AuthService();
   }
   componentDidMount() {
+    axios
+      .get(`/billing/information/${this.props.profile}`, this.auth.getHeaders())
+      .then(response => {
+        if (response.status !== 204) {
+          let newState = response.data[0];
+          this.setState({ newState, filledOut: true });
+        }
+      })
+      .catch(err => {
+        console.log("negative get response");
+      });
+    this.setState({ user_id: this.props.profile });
     this.props.card.mount("#cardElements");
   }
   inputChange(e) {
@@ -39,7 +55,24 @@ class Billing extends React.Component {
         errorElement.textContent = result.error.message;
       } else {
         console.log(result.token, this.state);
-        //
+        let payload = {
+          user_id: this.state.user_id,
+          token: result.token.id,
+          name: this.state.name,
+          billingAddress1: this.state.billingAddress1,
+          billingAddress2: this.state.billingAddress2,
+          billingCity: this.state.billingCity,
+          billingState: this.state.billingState,
+          billingZip: this.state.billingZip
+        };
+        axios
+          .post("/billing/information", payload, this.auth.getHeaders())
+          .then(results => {
+            console.log("successful return all the way back");
+          })
+          .catch(err => {
+            console.log("bug along the path");
+          });
       }
     });
   }

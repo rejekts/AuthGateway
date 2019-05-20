@@ -87,8 +87,33 @@ app.get("/dashboard/user/:id", jwtMW, (req, res) => {
     });
 });
 
+app.get("/billing/information/:id", jwtMW, (req, res) => {
+  console.log(req.params, " user id");
+  axios
+    .get(`http://localhost:8000/billing/information/${req.params.id}`)
+    .then(results => {
+      if (results.data) {
+        res.status(200).send(results.data);
+      } else {
+        res.status(204).send();
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(400).send();
+    });
+});
+
 app.post("/billing/information", jwtMW, (req, res) => {
   console.log(req.body, "body of post request");
+  axios
+    .post("http://localhost:8000/billing/information", req.body)
+    .then(results => {
+      console.log("positive results");
+    })
+    .catch(err => {
+      console.log("negative results");
+    });
 });
 
 app.get("/", jwtMW, (req, res) => {
