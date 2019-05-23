@@ -9,6 +9,7 @@ import {
 } from "semantic-ui-react";
 import axios from "axios";
 import AuthService from "../utilities/auth.js";
+import { withRouter } from "react-router-dom";
 
 class Billing extends React.Component {
   constructor(props) {
@@ -21,22 +22,15 @@ class Billing extends React.Component {
       billingCity: "",
       billingState: "",
       billingZip: "",
-      filledOut: false
+      filledOut: false,
+      token: null
     };
     this.auth = new AuthService();
   }
   componentDidMount() {
-    axios
-      .get(`/billing/information/${this.props.profile}`, this.auth.getHeaders())
-      .then(response => {
-        if (response.status !== 204) {
-          let newState = response.data[0];
-          this.setState({ newState, filledOut: true });
-        }
-      })
-      .catch(err => {
-        console.log("negative get response");
-      });
+    if (this.props.newState) {
+      this.setState(this.props.newState);
+    }
     this.setState({ user_id: this.props.profile });
     this.props.card.mount("#cardElements");
   }
@@ -47,14 +41,20 @@ class Billing extends React.Component {
       [e.target.id]: e.target.value
     });
   }
+  handleUpdate(e) {
+    e.preventDefault();
+    this.setState({ filledOut: false }, () => {
+      this.props.card.mount("#cardElements");
+    });
+  }
   handleSubmit(e) {
     e.preventDefault();
+    console.log("INITIAL ROUTE");
     this.props.stripe.createToken(this.props.card).then(result => {
       if (result.error) {
         let errorElement = document.getElementById("card-errors");
         errorElement.textContent = result.error.message;
       } else {
-        console.log(result.token, this.state);
         let payload = {
           user_id: this.state.user_id,
           token: result.token.id,
@@ -69,9 +69,40 @@ class Billing extends React.Component {
           .post("/billing/information", payload, this.auth.getHeaders())
           .then(results => {
             console.log("successful return all the way back");
+            this.setState({ filledOut: true });
           })
           .catch(err => {
             console.log("bug along the path");
+          });
+      }
+    });
+  }
+  handleResubmit(e) {
+    e.preventDefault();
+    console.log("UPDATE ROUTE");
+    this.props.stripe.createToken(this.props.card).then(result => {
+      if (result.error) {
+        let errorElement = document.getElementById("card-errors");
+        errorElement.textContent = result.error.message;
+      } else {
+        let payload = {
+          user_id: this.state.user_id,
+          token: result.token.id, //maybe dont store clientside??
+          name: this.state.name,
+          billingAddress1: this.state.billingAddress1,
+          billingAddress2: this.state.billingAddress2,
+          billingCity: this.state.billingCity,
+          billingState: this.state.billingState,
+          billingZip: this.state.billingZip
+        };
+        axios
+          .patch("/billing/information", payload, this.auth.getHeaders())
+          .then(results => {
+            console.log("successful update");
+            this.setState({ filledOut: true });
+          })
+          .catch(err => {
+            console.log("bug along the update path");
           });
       }
     });
@@ -80,6 +111,7 @@ class Billing extends React.Component {
     return this.state.filledOut ? (
       <Container>
         <Header as="h1">You are already ready to buy!</Header>
+        <Button onClick={e => this.handleUpdate(e)}>Update Payment Info</Button>
       </Container>
     ) : (
       <Container>
@@ -131,9 +163,15 @@ class Billing extends React.Component {
             control={Button}
             // disabled={valid}
             // loading={this.state.loading}
-            onClick={e => {
-              this.handleSubmit(e);
-            }}
+            onClick={
+              this.state.token === null
+                ? e => {
+                    this.handleSubmit(e);
+                  }
+                : e => {
+                    this.handleResubmit(e);
+                  }
+            }
           >
             Submit
           </Form.Field>
@@ -143,7 +181,7 @@ class Billing extends React.Component {
   }
 }
 
-export default Billing;
+export default withRouter(Billing);
 
 // (
 //   <Container>

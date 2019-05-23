@@ -32,7 +32,8 @@ class Main extends React.Component {
     this.state = {
       user_id: 0,
       user_proxies: [],
-      focus: "Dashboard"
+      focus: "Dashboard",
+      billingState: ""
     };
     this.auth = new AuthService();
     this.focusChange = this.focusChange.bind(this);
@@ -43,6 +44,19 @@ class Main extends React.Component {
     this.setState({
       user_id: profile.id
     });
+    axios
+      .get(`/billing/information/${profile.id}`, this.auth.getHeaders())
+      .then(response => {
+        if (response.status !== 204) {
+          let newState = response.data[0];
+          newState.filledOut = true;
+          console.log(newState);
+          this.setState({ billingState: newState });
+        }
+      })
+      .catch(err => {
+        console.log("negative get response");
+      });
     axios
       .get(`/dashboard/user/${profile.id}`, this.auth.getHeaders())
       .then(response => {
@@ -74,7 +88,12 @@ class Main extends React.Component {
         ) : this.state.focus === "Services" ? (
           <Services profile={this.state.user_id} />
         ) : (
-          <Billing card={card} profile={this.state.user_id} stripe={stripe} />
+          <Billing
+            newState={this.state.billingState}
+            card={card}
+            profile={this.state.user_id}
+            stripe={stripe}
+          />
         )}
       </div>
     );

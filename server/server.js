@@ -110,9 +110,29 @@ app.post("/billing/information", jwtMW, (req, res) => {
     .post("http://localhost:8000/billing/information", req.body)
     .then(results => {
       console.log("positive results");
+      res.status(200).send(response.data);
     })
     .catch(err => {
       console.log("negative results");
+      res.status(500).send();
+    });
+});
+app.patch("/billing/information", jwtMW, (req, res) => {
+  console.log("update payment going in");
+  //for updating user payment information
+  axios
+    .patch("http://localhost:8000/billing/information", req.body)
+    .then(response => {
+      console.log(response);
+      if (response.status === 200) {
+        res.status(200).send(response.data);
+      } else {
+        res.status(404).send();
+      }
+    })
+    .catch(err => {
+      console.log("error accessing billing server");
+      res.status(500).send();
     });
 });
 
