@@ -108,7 +108,7 @@ app.post("/billing/information", jwtMW, (req, res) => {
   console.log(req.body, "body of post request");
   axios
     .post("http://localhost:8000/billing/information", req.body)
-    .then(results => {
+    .then(response => {
       console.log("positive results");
       res.status(200).send(response.data);
     })
@@ -133,6 +133,22 @@ app.patch("/billing/information", jwtMW, (req, res) => {
     .catch(err => {
       console.log("error accessing billing server");
       res.status(500).send();
+    });
+});
+
+app.get("/proxies/available", jwtMW, (req, res) => {
+  console.log("route hit");
+  axios
+    .get("http://localhost:6000/proxies/available")
+    .then(results => {
+      console.log(results.data);
+      res.status(200).send(results.data.toString());
+    })
+    .catch(err => {
+      console.log(err);
+      console.log("error in store initial get path");
+
+      res.status(404).send();
     });
 });
 

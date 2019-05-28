@@ -33,10 +33,11 @@ class Main extends React.Component {
       user_id: 0,
       user_proxies: [],
       focus: "Dashboard",
-      billingState: ""
+      billingState: null
     };
     this.auth = new AuthService();
     this.focusChange = this.focusChange.bind(this);
+    this.updateBilling = this.updateBilling.bind(this);
   }
   componentDidMount() {
     let profile = this.auth.getProfile();
@@ -72,8 +73,16 @@ class Main extends React.Component {
   }
   focusChange(e, focus) {
     e.preventDefault();
+    if (this.auth.isTokenExpired(this.auth.getToken())) {
+      this.props.history.push("/login");
+    }
     console.log(focus, "<= the new focus");
     this.setState({ focus });
+  }
+
+  updateBilling(billingState) {
+    console.log(billingState);
+    this.setState({ billingState });
   }
 
   render() {
@@ -86,13 +95,17 @@ class Main extends React.Component {
             user_proxies={this.state.user_proxies}
           />
         ) : this.state.focus === "Services" ? (
-          <Services profile={this.state.user_id} />
+          <Services
+            billingState={this.state.billingState}
+            profile={this.state.user_id}
+          />
         ) : (
           <Billing
             newState={this.state.billingState}
             card={card}
             profile={this.state.user_id}
             stripe={stripe}
+            update={this.updateBilling}
           />
         )}
       </div>

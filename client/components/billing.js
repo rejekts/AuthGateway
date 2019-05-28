@@ -28,7 +28,8 @@ class Billing extends React.Component {
     this.auth = new AuthService();
   }
   componentDidMount() {
-    if (this.props.newState) {
+    console.log("here");
+    if (this.props.newState !== null) {
       this.setState(this.props.newState);
     }
     this.setState({ user_id: this.props.profile });
@@ -70,6 +71,8 @@ class Billing extends React.Component {
           .then(results => {
             console.log("successful return all the way back");
             this.setState({ filledOut: true });
+            payload.filledOut = true;
+            this.props.update(payload);
           })
           .catch(err => {
             console.log("bug along the path");
@@ -100,6 +103,8 @@ class Billing extends React.Component {
           .then(results => {
             console.log("successful update");
             this.setState({ filledOut: true });
+            payload.filledOut = true;
+            this.props.update(payload);
           })
           .catch(err => {
             console.log("bug along the update path");
@@ -110,7 +115,7 @@ class Billing extends React.Component {
   render() {
     return this.state.filledOut ? (
       <Container>
-        <Header as="h1">You are already ready to buy!</Header>
+        <Header as="h1">You are ready to buy!</Header>
         <Button onClick={e => this.handleUpdate(e)}>Update Payment Info</Button>
       </Container>
     ) : (
