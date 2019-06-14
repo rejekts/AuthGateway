@@ -1,4 +1,5 @@
 import decode from "jwt-decode";
+//class that you instantiate on each component to allow access to auth services.
 export default class AuthService {
   constructor(domain) {
     this.domain = domain || "http://localhost:3000";
@@ -58,9 +59,10 @@ export default class AuthService {
   }
 
   getProfile() {
-    // Using jwt-decode npm package to decode the token
+    // Using jwt-decode npm package to decode the token. any additional profile information is stored here if you ever need access to it
     return decode(this.getToken());
   }
+  //getheaders is REQUIRED for ANY REQUEST that goes to the gateway API, as it sets the token in the headers to prevent unauthorized users from accessing routes.
   getHeaders() {
     const headers = {
       Accept: "application/json",
@@ -71,7 +73,7 @@ export default class AuthService {
     }
     return { headers };
   }
-
+  //this is optional, i use axios instead and getheaders
   fetch(url, options) {
     // performs api calls sending the required authentication headers
     const headers = {

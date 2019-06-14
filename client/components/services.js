@@ -36,12 +36,16 @@ class Services extends React.Component {
     return (
       <Container>
         <Header as="h1">Services</Header>
-        <Header as="h2">These are auto-renewing monthly subscriptions</Header>
+        <Header as="h3">These are auto-renewing monthly subscriptions</Header>
         <Header as="h3">Proxies available: {this.state.availableCount}</Header>
-        <Header as="h4">Price per individual proxy: $250 USD/monmonth</Header>
-        <Header as="h4">Price per 5 or more proxies: $225 USD/mon</Header>
+        <Header as="h4">Price per individual proxy: $250/mon</Header>
+        <Header as="h4">Price per 5 or more proxies: $225/mon</Header>
         {this.props.billingState ? (
-          <Cart options={this.state.options} max={this.state.availableCount} />
+          <Cart
+            options={this.state.options}
+            max={this.state.availableCount}
+            id={this.props.profile}
+          />
         ) : (
           <Header as="h4">
             Please fill out billing information to continue

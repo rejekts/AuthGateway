@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const Salts = 15;
+const Salts = 15; //production ready
 
 const hashPassword = async password => {
   let data = await new Promise((resolve, reject) => {

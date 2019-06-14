@@ -16,7 +16,7 @@ class App extends React.Component {
     super(props);
     this.auth = new AuthService();
   }
-
+  // this is the router, the protect class is invoked with each page that should only be seen by a user that is logged in. easy to add additional protected features.
   render() {
     return (
       <BrowserRouter>

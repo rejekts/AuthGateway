@@ -14,14 +14,14 @@ class CreateAcct extends React.Component {
       retyped: "",
       loading: false,
       emailError: false,
-      passwordError: false,
+      passwordError: false, //state for the three inputs, as well as whether or not they are in error.
       retypedError: false
     };
     this.auth = new AuthService();
   }
   inputChange(e) {
     e.preventDefault();
-    let err = e.target.id + "Error";
+    let err = e.target.id + "Error"; //any time a user changes an input, the error goes away.
     this.setState({
       [e.target.id]: e.target.value,
       [err]: false
@@ -30,7 +30,7 @@ class CreateAcct extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let check = formValidator(this.state);
+    let check = formValidator(this.state); //verifying email and passwords
     if (check.result) {
       this.setState({ loading: true });
       //passwords match?  TODO <------------
@@ -42,33 +42,29 @@ class CreateAcct extends React.Component {
       axios
         .post("/createAccount", payload)
         .then(data => {
-          console.log(data.data, "<= data from createAccount request");
-
           if (data.data === 23505) {
             alert(
-              "We already have an account associated with that email address."
+              "We already have an account associated with that email address." //specific code sent back from DB when user with that email already exists.
             );
           } else if (data.data === 23502) {
-            alert("error creating account");
+            alert("error creating account"); //straight up bug with DB
           } else {
-            console.log(data, "success");
             this.auth
-              .login(payload.user_email, payload.user_password)
+              .login(payload.user_email, payload.user_password) //upon successful account creating, automatically logs user in
               .then(response => {
-                console.log("logged in");
                 this.setState({ loading: false });
                 this.props.history.push("/main");
               })
               .catch(err => {
-                console.log("something went wrong in createAcct");
+                console.log("something went wrong in createAcct"); //error authorizing token
               });
           }
         })
         .catch(err => {
-          console.error(err);
+          console.error(err); //error with server (never had as issue here)
         });
     } else {
-      console.log(check.code, "error code");
+      //telling the user what the did wrong based on the error code from the validation. alerts, and errors the corresponding inputs.
       if (check.code === 1) {
         alert("Please enter a valid email");
         this.setState({ emailError: true });

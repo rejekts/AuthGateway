@@ -9,7 +9,7 @@ import Billing from "./billing.js";
 
 const stripe = Stripe("pk_test_OlwkpT4F6iqWnxxsxYV14LVA00aubL2pG3");
 const elements = stripe.elements();
-
+//your top page. this is where stripe is initialized and passed down. this page renders the nav bar, and holds the 'focus' depending on which route the user is visiting.
 const cardStyle = {
   base: {
     color: "#32325d",
@@ -40,13 +40,12 @@ class Main extends React.Component {
     this.updateBilling = this.updateBilling.bind(this);
   }
   componentDidMount() {
-    let profile = this.auth.getProfile();
-    console.log(profile.id);
+    let profile = this.auth.getProfile(); //puts user id in state and passes to each route
     this.setState({
       user_id: profile.id
     });
     axios
-      .get(`/billing/information/${profile.id}`, this.auth.getHeaders())
+      .get(`/billing/information/${profile.id}`, this.auth.getHeaders()) //if user has billing info saved, this grabs it
       .then(response => {
         if (response.status !== 204) {
           let newState = response.data[0];
@@ -59,7 +58,7 @@ class Main extends React.Component {
         console.log("negative get response");
       });
     axios
-      .get(`/dashboard/user/${profile.id}`, this.auth.getHeaders())
+      .get(`/dashboard/user/${profile.id}`, this.auth.getHeaders()) //this grabs the logged in user's proxies that he/she is subscribed to.
       .then(response => {
         //response = JSON.parse(response);
         console.log(response, "success!");
@@ -74,6 +73,7 @@ class Main extends React.Component {
   focusChange(e, focus) {
     e.preventDefault();
     if (this.auth.isTokenExpired(this.auth.getToken())) {
+      //changing the route based on click in nav bar. if user has timed out, redirects to login
       this.props.history.push("/login");
     }
     console.log(focus, "<= the new focus");
@@ -81,7 +81,7 @@ class Main extends React.Component {
   }
 
   updateBilling(billingState) {
-    console.log(billingState);
+    console.log(billingState); //when billing info is saved, this rerenders the billing page to reflect that to the user
     this.setState({ billingState });
   }
 

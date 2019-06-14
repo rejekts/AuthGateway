@@ -4,7 +4,7 @@ import AuthService from "../utilities/auth.js";
 import { withRouter } from "react-router-dom";
 import Proxy from "./proxy.js";
 import { Menu, Container, Button, Header, List } from "semantic-ui-react";
-
+//the place where users see their products.
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +17,7 @@ class Dashboard extends React.Component {
   }
   handleSelect(e, key) {
     e.preventDefault();
-    this.setState({ key, selected: !this.state.selected });
+    this.setState({ key, selected: !this.state.selected }); //allows user to select specific proxy and see more details
   }
 
   render() {

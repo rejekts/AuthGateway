@@ -12,6 +12,7 @@ import AuthService from "../utilities/auth.js";
 import { withRouter } from "react-router-dom";
 
 class Billing extends React.Component {
+  //billing route, either collects billing information, or declares its already saved with the option to update it.
   constructor(props) {
     super(props);
     this.state = {
@@ -28,8 +29,8 @@ class Billing extends React.Component {
     this.auth = new AuthService();
   }
   componentDidMount() {
-    console.log("here");
     if (this.props.newState !== null) {
+      //f
       this.setState(this.props.newState);
     }
     this.setState({ user_id: this.props.profile });
@@ -37,7 +38,7 @@ class Billing extends React.Component {
   }
   inputChange(e) {
     e.preventDefault();
-    //let err = e.target.id + "Error";
+    //let err = e.target.id + "Error"; //if you want to add errors to specific fields, there is no validation here
     this.setState({
       [e.target.id]: e.target.value
     });
@@ -69,7 +70,6 @@ class Billing extends React.Component {
         axios
           .post("/billing/information", payload, this.auth.getHeaders())
           .then(results => {
-            console.log("successful return all the way back");
             this.setState({ filledOut: true });
             payload.filledOut = true;
             this.props.update(payload);
@@ -81,8 +81,8 @@ class Billing extends React.Component {
     });
   }
   handleResubmit(e) {
+    //this is the update billing route
     e.preventDefault();
-    console.log("UPDATE ROUTE");
     this.props.stripe.createToken(this.props.card).then(result => {
       if (result.error) {
         let errorElement = document.getElementById("card-errors");
@@ -90,7 +90,7 @@ class Billing extends React.Component {
       } else {
         let payload = {
           user_id: this.state.user_id,
-          token: result.token.id, //maybe dont store clientside??
+          token: result.token.id, //maybe dont store clientside?? this will be saved in the database. IT IS NEEDED TO CREATE A STRIPE CUSTOMER, which returns a different token that can be used for multiple payments
           name: this.state.name,
           billingAddress1: this.state.billingAddress1,
           billingAddress2: this.state.billingAddress2,

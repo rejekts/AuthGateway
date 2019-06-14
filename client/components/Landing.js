@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { Menu, Container, Button } from "semantic-ui-react";
 import AuthService from "../utilities/auth.js";
-
+//main page visited when user enters ANY url, currently has login/signup buttons. needs completion.
 class Landing extends React.Component {
   constructor(props) {
     super(props);

@@ -20,32 +20,33 @@ const jwtMW = expressjwt({
   secret: "to be determined"
 });
 
+//ACCOUNT ROUTES-------------------------------------------
 app.post("/createAccount", (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   utility
     .hashPassword(req.body.user_password)
     .then(hashed => {
-      console.log(hashed, "hashed");
+      //console.log(hashed, "hashed");
       req.body.user_password = hashed;
       db.createAccount(req.body)
         .then(data => {
-          console.log(data, "<= data coming back from account creation");
+          //console.log(data, "<= data coming back from account creation");
           res.status(200).send("Success");
         })
         .catch(err => {
-          console.log("error from create account");
+          //console.log("error from create account");
           res.send(err.code);
         });
     })
     .catch(err => {
-      console.log("error in your hash code");
+      //console.log("error in your hash code");
     });
 });
 
 app.post("/login", (req, res) => {
   db.validateLogin(req.body)
     .then(data => {
-      console.log(data, "<= data from validate login back");
+      //console.log(data, "<= data from validate login back");
       if (data !== "Successful Login!") {
         res.status(401).json({
           success: false,
@@ -68,27 +69,32 @@ app.post("/login", (req, res) => {
       }
     })
     .catch(err => {
-      console.log(err);
+      //console.log(err);
       res.send(err);
     });
 });
+
+//Dashboard display routes------------------------------------------------
+
 app.get("/dashboard/user/:id", jwtMW, (req, res) => {
-  console.log(req.params);
+  //console.log(req.params);
   axios
     .get(`http://localhost:5000/getAll/${req.params.id}`)
     .then(response => {
-      console.log("successful return from proxy server");
-      console.log(response.data);
+      //console.log("successful return from proxy server");
+      //console.log(response.data);
       res.status(200).send(response.data);
     })
     .catch(err => {
-      console.log("error from proxy server");
+      //console.log("error from proxy server");
       res.status(401).send(err);
     });
 });
 
+//billing information routes-----------------------------------------------
+
 app.get("/billing/information/:id", jwtMW, (req, res) => {
-  console.log(req.params, " user id");
+  //console.log(req.params, " user id");
   axios
     .get(`http://localhost:8000/billing/information/${req.params.id}`)
     .then(results => {
@@ -105,11 +111,11 @@ app.get("/billing/information/:id", jwtMW, (req, res) => {
 });
 
 app.post("/billing/information", jwtMW, (req, res) => {
-  console.log(req.body, "body of post request");
+  //console.log(req.body, "body of post request");
   axios
     .post("http://localhost:8000/billing/information", req.body)
     .then(response => {
-      console.log("positive results");
+      //console.log("positive results");
       res.status(200).send(response.data);
     })
     .catch(err => {
@@ -118,12 +124,12 @@ app.post("/billing/information", jwtMW, (req, res) => {
     });
 });
 app.patch("/billing/information", jwtMW, (req, res) => {
-  console.log("update payment going in");
+  //console.log("update payment going in");
   //for updating user payment information
   axios
     .patch("http://localhost:8000/billing/information", req.body)
     .then(response => {
-      console.log(response);
+      ////console.log(response);
       if (response.status === 200) {
         res.status(200).send(response.data);
       } else {
@@ -136,12 +142,14 @@ app.patch("/billing/information", jwtMW, (req, res) => {
     });
 });
 
+//Store/purchase routes----------------------------------------------
+
 app.get("/proxies/available", jwtMW, (req, res) => {
-  console.log("route hit");
+  //console.log("route hit");
   axios
     .get("http://localhost:6000/proxies/available")
     .then(results => {
-      console.log(results.data);
+      //console.log(results.data);
       res.status(200).send(results.data.toString());
     })
     .catch(err => {
@@ -152,11 +160,14 @@ app.get("/proxies/available", jwtMW, (req, res) => {
     });
 });
 
-app.get("/", jwtMW, (req, res) => {
-  res.send("You are authenticated"); //Sending some response when authenticated
+app.post("/purchase", jwtMW, (req, res) => {
+  console.log("route hit");
+  console.log(req.body);
+  //get token from billing
+  //
 });
 
-// Error handling
+// Error handling -------------------------------------------------
 app.use(function(err, req, res, next) {
   if (err.name === "UnauthorizedError") {
     // Send the error rather than to show it on the console

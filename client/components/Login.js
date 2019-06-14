@@ -10,7 +10,7 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      loading: false
+      loading: false //since there are so many layers of salt/hashing, the login process takes some time to verify passwords. there is a loading spiral for UX.
     };
     this.auth = new AuthService();
   }
@@ -35,7 +35,7 @@ class Login extends React.Component {
         alert("Email or Password Incorrect");
         this.setState({ loading: false });
 
-        document.getElementById("password").value = "";
+        document.getElementById("password").value = ""; //doesnt tell the user if email was correct or not, but clears the password field.
       });
   }
 

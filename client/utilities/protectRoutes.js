@@ -2,6 +2,8 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import AuthService from "./auth.js";
 
+//premise is fairly simple, any time a protected route is accessed, this verifies the user is still authorized/logged in, and if not, they are redirected to the login page.
+
 const Protect = Route => {
   return class extends React.Component {
     constructor(props) {
@@ -10,12 +12,10 @@ const Protect = Route => {
         loading: true,
         redirect: false
       };
-      this.auth = new AuthService();
+      this.auth = new AuthService(); //this is required on every class to use auth methods
     }
     componentDidMount() {
-      console.log("made it here");
       if (this.auth.loggedIn()) {
-        console.log("true");
         this.setState({
           loading: false
         });
